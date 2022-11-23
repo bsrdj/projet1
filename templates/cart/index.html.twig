@@ -1,0 +1,78 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello CartController!
+{% endblock %}
+
+{% block body %}
+	<div class="bg-light p-3">
+		<h1>Votre panier</h1>
+	</div>
+	<div class="col-md-12">
+		{% if items | length > 0 %}
+			<table class="table table-striped border">
+				<thead>
+					<tr>
+						<th>Image</th>
+						<th>Produit</th>
+						<th class="text-center">Prix unitaire HT</th>
+						<th class="text-center">Prix unitaire TTC</th>
+						<th class="text-center">Quantité</th>
+						<th class="text-center">Total</th>
+						<th></th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for item in items %}
+						<tr>
+							<td class="align-middle"><img class="rounded-circle" width="100" src="{{ item.product.image }}" alt="{{ item.product.title }} /"></td>
+							<td class="align-middle" style="width:40%">
+								<h6>
+									<a href="{{ path('product_view', {'id': item.product.id }) }}">{{ item.product.title }}</a>
+								</h6>
+								<p>{{ item.product.description | length > 100 ? item.product.description | slice(0,100) ~' (...)' : item.product.description }}</p>
+							</td>
+							<td class="text-center align-middle">
+								{% set calcHt = item.product.price * tva / 100 %}
+								{% set priceHt = item.product.price - calcHt %}
+								{{ priceHt | number_format(2, ',', '.') ~ ' €' }}</td>
+							<td class="text-center align-middle">{{ item.product.price | number_format(2, ',', '.') ~ ' €' }}</td>
+							<td class="text-center align-middle">{{ item.quantity }}</td>
+							<td class="text-center align-middle">{% set priceItemTotal = item.product.price * item.quantity %}
+								{{ priceItemTotal | number_format(2, ',', '.')  ~ ' €' }}
+							</td>
+							<td class="text-center align-middle">
+								<a href="{{ path('cart_remove', {'id': item.product.id}) }}" class="btn btn-danger btn-sm">
+									<i class="fas fa-trash"></i>
+								</a>
+							</td>
+						</tr>
+					{% endfor %}
+					<tr>
+						<td colspan="5" class="text-right">TVA
+							{{ tva ~ ' %'}}
+							:
+						</td>
+						<td colspan="2">{{ totalTVA | number_format(2, ',', '.') ~ ' €' }}</td>
+					</tr>
+					<tr>
+						<td colspan="5" class="text-right">Nombre d'article dans votre panier :
+						</td>
+						<td colspan="2">{{ totalItems > 1 ? totalItems ~ ' Articles' : totalItems ~ ' Article' }}</td>
+					</tr>
+				</tbody>
+				<tr>
+					<td colspan="5" class="text-right">Total HT :
+					</td>
+					<td colspan="2">{% set totalHT = totalTTC - totalTVA %}{{ totalHT | number_format(2, ',', '.') ~ ' €' }}</td>
+				</tr>
+				<tr>
+					<td colspan="5" class="text-right">Total TTC :
+					</td>
+					<td colspan="2">{{ totalTTC | number_format(2, ',', '.') ~ ' €' }}</td>
+				</tr>
+			</tbody>
+		</table>
+	{% else %}
+		<p>Aucun article</p>
+	{% endif %}
+</div>{% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Les produits
+{% endblock %}
+
+{% block body %}
+	<div class="bg-light p-3">
+		<h1>Les produits</h1>
+	</div>
+
+	<div class="row">
+		{% for product in products %}
+			<div class="col-3 mt-4">
+				<div class="card border border-dark rounded p-2 clearfix">
+					<img class="card-img-top rounded" src="{{ product.image }}" alt="Image de {{ product.title }}">
+					<div class="card-body">
+						<h5 class="card-title">{{ product.title }}</h5>
+                        <p class="bg-light text-center p-3 border border-dark rounded">{{ product.price ~ ' €' }}</p>
+
+						<p class="card-text">{{ product.description | length > 100 ? product.description | slice(0,150) ~' (...)' : product.description }}</p>
+					</div>
+					<div class="d-flex justify-content-between">
+						<a href="{{ path('product_view', {'id': product.id }) }}" class="btn btn-primary btm-sm">
+							<i class="fas fa-eye mr-1"></i>
+							Voir +
+						</a>
+						<a href="{{ path('cart_add', {'id': product.id }) }}" class="btn btn-success btm-sm float-right">
+							<i class="fas fa-shopping-cart mr-1"></i>
+							Ajouter
+						</a>
+					</div>
+				</div>
+			</div>
+		{% endfor %}
+	</div>
+{% endblock %}
